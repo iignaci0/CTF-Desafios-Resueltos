@@ -1,0 +1,21 @@
+=== TERMINAL A: levanto el servidor del desafio ===
+$ python3 servidor_ctf.py --modo reto
+CTF reto escuchando en 127.0.0.1:4646. Ctrl+C para cerrar.
+
+=== TERMINAL B: 1) escaneo que puerto acepta conexiones (4644-4648) ===
+$ nc -nvz -w 1 127.0.0.1 4644-4648
+nc: connect to 127.0.0.1 port 4644 (tcp) failed: Connection refused
+nc: connect to 127.0.0.1 port 4645 (tcp) failed: Connection refused
+Connection to 127.0.0.1 4646 port [tcp/*] succeeded!
+nc: connect to 127.0.0.1 port 4647 (tcp) failed: Connection refused
+nc: connect to 127.0.0.1 port 4648 (tcp) failed: Connection refused
+
+=== TERMINAL B: 2) me conecto al puerto abierto y hablo con el servicio ===
+$ printf 'AYUDA\nINFO\nLEER registro.txt\nSALIR\n' | nc -n -w 3 127.0.0.1 4646
+Archivo CTF local. Escribe AYUDA para comenzar.
+Comandos: AYUDA, INFO, LEER <nombre>, SALIR
+Archivo logico disponible: registro.txt
+FLAG{consulta_el_servicio_2026}
+Sesion terminada.
+
+=== Cierro el servidor (Ctrl+C en terminal A) ===

@@ -1,0 +1,228 @@
+RETO 2 - Clave sha512crypt ($6$) con Hashcat   [modo 1800, ataque de mascara -a 3]
+==================================================================================
+# hash objetivo (h2.txt):
+$6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBozxIgMk8FFmRA7th8WxpfLVK10Aw8kIdAqNxp3iLP8HEIKDwi72nB2a0
+
+La politica pedia: 1 mayuscula + 5 minusculas + 2 digitos
+   ->  mascara  ?u?l?l?l?l?l?d?d   ( ?u=mayus  ?l=minus  ?d=digito )
+
+----------------------------------------------------------------------------------
+PASO A  -  Confirmacion directa con openssl (sha512crypt es reproducible)
+----------------------------------------------------------------------------------
+$ openssl passwd -6 -salt k1SbrWS.VbIKRJhn Zebras42
+resultado openssl : $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBozxIgMk8FFmRA7th8WxpfLVK10Aw8kIdAqNxp3iLP8HEIKDwi72nB2a0
+hash original     : $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBozxIgMk8FFmRA7th8WxpfLVK10Aw8kIdAqNxp3iLP8HEIKDwi72nB2a0
+>>> COINCIDE: la clave es  Zebras42
+
+----------------------------------------------------------------------------------
+PASO B  -  Tamano del espacio de busqueda
+----------------------------------------------------------------------------------
+26 (mayus) x 26^5 (minus) x 10^2 (digitos) = 30.891.577.600 combinaciones posibles
+
+----------------------------------------------------------------------------------
+PASO C  -  Ataque real en la GPU, acotado a ~45s para medir velocidad y ETA
+----------------------------------------------------------------------------------
+$ hashcat -m 1800 -a 3 h2.txt ?u?l?l?l?l?l?d?d -w 3 --status --status-timer 8 --runtime 45
+hashcat (v6.2.6) starting
+
+* Device #1: WARNING! Kernel exec timeout is not disabled.
+             This may cause "CL_OUT_OF_RESOURCES" or related errors.
+             To disable the timeout, see: https://hashcat.net/q/timeoutpatch
+* Device #2: WARNING! Kernel exec timeout is not disabled.
+             This may cause "CL_OUT_OF_RESOURCES" or related errors.
+             To disable the timeout, see: https://hashcat.net/q/timeoutpatch
+CUDA API (CUDA 13.4)
+====================
+* Device #1: NVIDIA GeForce RTX 4060 Ti, 7075/8187 MB, 34MCU
+
+OpenCL API (OpenCL 3.0 CUDA 13.4.96) - Platform #1 [NVIDIA Corporation]
+=======================================================================
+* Device #2: NVIDIA GeForce RTX 4060 Ti, skipped
+
+OpenCL API (OpenCL 3.0 ) - Platform #2 [Intel(R) Corporation]
+=============================================================
+* Device #3: Intel(R) UHD Graphics 770, 3520/7145 MB (1786 MB allocatable), 32MCU
+
+Minimum password length supported by kernel: 0
+Maximum password length supported by kernel: 256
+
+Counting lines in C:/Users/Ignacio/AppData/Local/Temp/claude/3d5ed4b5ffafadc5/e8a6df27-ccd7-46cb-b371-d3b8a00bd299/scratchpad/john-work/h2.txt. Please be patient...Counted lines in C:/Users/Ignacio/AppData/Local/Temp/claude/3d5ed4b5ffafadc5/e8a6df27-ccd7-46cb-b371-d3b8a00bd299/scratchpad/john-work/h2.txtParsed Hashes: 1/1 (100.00%)Parsed Hashes: 1/1 (100.00%)Sorting hashes. Please be patient...Sorted hashesRemoving duplicate hashes. Please be patient...Removed duplicate hashesSorting salts. Please be patient...Sorted saltsComparing hashes with potfile entries. Please be patient...Compared hashes with potfile entriesGenerating bitmap tables...Generated bitmap tablesHashes: 1 digests; 1 unique digests, 1 unique salts
+Bitmaps: 16 bits, 65536 entries, 0x0000ffff mask, 262144 bytes, 5/13 rotates
+
+Optimizers applied:
+* Zero-Byte
+* Single-Hash
+* Single-Salt
+* Brute-Force
+* Uses-64-Bit
+
+ATTENTION! Pure (unoptimized) backend kernels selected.
+Pure kernels can crack longer passwords, but drastically reduce performance.
+If you want to switch to optimized kernels, append -O to your commandline.
+See the above message to find out about the exact limits.
+
+Watchdog: Temperature abort trigger set to 90c
+
+Initializing device kernels and memory. Please be patient...Initializing backend runtime for device #1. Please be patient...Initialized backend runtime for device #1Initializing backend runtime for device #3. Please be patient...Initialized backend runtime for device #3Host memory required for this attack: 562 MB
+
+Initialized device kernels and memoryStarting self-test. Please be patient...Finished self-testStarting autotune. Please be patient...Finished autotune                                                          [s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit => 
+
+Session..........: hashcat
+Status...........: Running
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (8 secs)
+Time.Estimated...: Sat Nov 07 18:13:58 2026 (2 days, 12 hours; Runtime limited: 37 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   141.6 kH/s (90.29ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1326 H/s (37.69ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   142.9 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 1058816/30891577600 (0.00%)
+Rejected.........: 0/1058816 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:4-5 Iteration:1280-1536
+Restore.Sub.#3...: Salt:0 Amplifier:20-21 Iteration:2560-3072
+Candidate.Engine.: Device Generator
+Candidates.#1....: Carier12 -> Cyzqra12
+Candidates.#3....: Otgvta12 -> Oiozst12
+Hardware.Mon.#1..: Temp: 66c Fan: 30% Util:100% Core:2745MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+
+[s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit => 
+
+Session..........: hashcat
+Status...........: Running
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (16 secs)
+Time.Estimated...: Sat Nov 07 17:39:14 2026 (2 days, 11 hours; Runtime limited: 29 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   142.9 kH/s (90.29ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1329 H/s (37.64ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   144.3 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 2118144/30891577600 (0.01%)
+Rejected.........: 0/2118144 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:8-9 Iteration:3584-3840
+Restore.Sub.#3...: Salt:0 Amplifier:15-16 Iteration:2560-3072
+Candidate.Engine.: Device Generator
+Candidates.#1....: Parier12 -> Pyzqra12
+Candidates.#3....: Fuvqra12 -> Fglxba12
+Hardware.Mon.#1..: Temp: 67c Fan: 53% Util:100% Core:2730MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+
+[s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit => 
+
+Session..........: hashcat
+Status...........: Running
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (24 secs)
+Time.Estimated...: Sat Nov 07 17:29:56 2026 (2 days, 11 hours; Runtime limited: 21 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   143.3 kH/s (90.24ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1328 H/s (37.69ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   144.6 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 3439616/30891577600 (0.01%)
+Rejected.........: 0/3439616 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:13-14 Iteration:512-768
+Restore.Sub.#3...: Salt:0 Amplifier:10-11 Iteration:1536-2048
+Candidate.Engine.: Device Generator
+Candidates.#1....: Harier12 -> Hyzqra12
+Candidates.#3....: Rflxba12 -> Rchaer12
+Hardware.Mon.#1..: Temp: 67c Fan: 56% Util:100% Core:2730MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+
+[s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit => 
+
+Session..........: hashcat
+Status...........: Running
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (32 secs)
+Time.Estimated...: Sat Nov 07 17:26:01 2026 (2 days, 11 hours; Runtime limited: 13 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   143.5 kH/s (90.57ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1328 H/s (37.80ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   144.8 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 4498944/30891577600 (0.01%)
+Rejected.........: 0/4498944 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:17-18 Iteration:2816-3072
+Restore.Sub.#3...: Salt:0 Amplifier:5-6 Iteration:1536-2048
+Candidate.Engine.: Device Generator
+Candidates.#1....: Earier12 -> Eyzqra12
+Candidates.#3....: Jpanma12 -> Jrhaer12
+Hardware.Mon.#1..: Temp: 68c Fan: 58% Util:100% Core:2730MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+
+[s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit => 
+
+Session..........: hashcat
+Status...........: Running
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (40 secs)
+Time.Estimated...: Sat Nov 07 17:22:21 2026 (2 days, 11 hours; Runtime limited: 5 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   143.6 kH/s (90.14ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1330 H/s (37.40ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   145.0 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 5820416/30891577600 (0.02%)
+Rejected.........: 0/5820416 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:22-23 Iteration:0-256
+Restore.Sub.#3...: Salt:0 Amplifier:0-1 Iteration:2048-2560
+Candidate.Engine.: Device Generator
+Candidates.#1....: Zarier12 -> Zyzqra12
+Candidates.#3....: Mlhaer12 -> Mzyaer12
+Hardware.Mon.#1..: Temp: 68c Fan: 58% Util:100% Core:2730MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+
+[s]tatus [p]ause [b]ypass [c]heckpoint [f]inish [q]uit =>                                                           Runtime limit reached, aborting
+                                                          Session..........: hashcat
+Status...........: Aborted (Runtime)
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Hash.Target......: $6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBo...2nB2a0
+Time.Started.....: Thu Nov 05 06:10:31 2026 (45 secs)
+Time.Estimated...: Sat Nov 07 17:21:30 2026 (2 days, 11 hours; Runtime limit exceeded)
+Kernel.Feature...: Pure Kernel
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   143.7 kH/s (90.49ms) @ Accel:2048 Loops:256 Thr:128 Vec:1
+Speed.#3.........:     1330 H/s (37.75ms) @ Accel:8 Loops:512 Thr:64 Vec:1
+Speed.#*.........:   145.0 kH/s
+Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
+Progress.........: 6351360/30891577600 (0.02%)
+Rejected.........: 0/6351360 (0.00%)
+Restore.Point....: 0/1188137600 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:24-25 Iteration:3840-4096
+Restore.Sub.#3...: Salt:0 Amplifier:13-14 Iteration:2560-3072
+Candidate.Engine.: Device Generator
+Candidates.#1....: Uarier12 -> Uyzqra12
+Candidates.#3....: Hlhaer12 -> Hzyaer12
+Hardware.Mon.#1..: Temp: 68c Fan: 59% Util:100% Core:2730MHz Mem:8751MHz Bus:8
+Hardware.Mon.#3..: N/A
+                                                          Runtime limit reached, aborting
+Started: Thu Nov 05 06:10:21 2026
+Stopped: Thu Nov 05 06:11:18 2026
+
+NOTA: sha512crypt es un hash LENTO a proposito (muchas rondas internas). A la velocidad
+de la GPU, recorrer las ~30 mil millones de combinaciones tomaria un monton; por eso el
+PASO A (confirmar la clave que dedujimos de la politica) es el camino sensato aca.

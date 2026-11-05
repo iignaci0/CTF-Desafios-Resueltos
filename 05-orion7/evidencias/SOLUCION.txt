@@ -1,0 +1,61 @@
+ORION-7  -  cadena completa de la resolucion (solo desde afuera, sin docker exec/cp)
+================================================================================
+
+[1] Reconocimiento
+    $ curl -s -i http://127.0.0.1:8080/            -> 200, portal publico (nginx)
+    En el HTML de la portada hay un comentario:
+        <!-- TODO(K.V.): borrar antes de la auditoria -> FLAG{n0_t4n_r4p1d0} -->
+    OJO: es un SENUELO. "n0_t4n_r4p1d0" = "no tan rapido". No es la flag real.
+
+[2] robots.txt
+    $ curl -s http://127.0.0.1:8080/robots.txt
+        User-agent: *
+        Disallow: /personal/
+
+[3] gobuster en la raiz  (herramienta real, dentro de WSL)
+    $ gobuster dir -u http://127.0.0.1:8080 -w common.txt -x txt,html,php,bak -t 30
+        /archive   (301 -> /archive/)
+        /personal  (301 -> /personal/)
+        /404.html, /403.html  (paginas de error personalizadas)
+
+[4] /personal/  -> nota del operador K.V.
+    "escondi todo lo viejo en una carpeta que no esta enlazada... quite el listado
+     de archivos... pero no alcance a borrar uno de los respaldos."
+    -> apunta a un respaldo dentro de /archive/
+
+[5] /archive/  -> 403 (existe pero no se lista). En la propia pagina 403:
+        # fragmento 1/3
+        n4d4                          <<< FRAGMENTO 1
+    La pagina avisa: "Si conoces el nombre exacto de un archivo, es otra historia."
+
+[6] gobuster dentro de /archive/
+    $ gobuster dir -u http://127.0.0.1:8080/archive -w common.txt -x txt,html,php,bak,json,log
+        /config.bak  (200)
+    $ curl -s http://127.0.0.1:8080/archive/config.bak
+        ... [notas] nota_operador = <base64>
+    $ echo '<base64>' | base64 -d
+        "el sistema de control quedo en /core/ y solo responde al agente de
+         monitoreo, que se identifica como SENTINEL/2.1. Desde afuera parece que
+         no existe. [fragmento 2/3: 3st4] -K.V."
+        3st4                          <<< FRAGMENTO 2
+
+[7] /core/  -> truco de User-Agent
+    $ curl -s -i http://127.0.0.1:8080/core/                       -> 404 (no existe)
+    $ curl -s -i -A 'SENTINEL/2.1' http://127.0.0.1:8080/core/     -> 403 (existe!)
+
+[8] gobuster en /core/ CON el User-Agent correcto
+    $ gobuster dir -u http://127.0.0.1:8080/core -w common.txt -a 'SENTINEL/2.1' ...
+        /console  (301 -> /core/console/)
+    $ curl -s -A 'SENTINEL/2.1' http://127.0.0.1:8080/core/console/
+        "Bienvenido, SENTINEL."
+        # fragmento 3/3
+        0cult0                        <<< FRAGMENTO 3
+
+[9] FLAG armada
+    FLAG{n4d4_3st4_0cult0}      ("nada esta oculto")
+
+    Senuelo descartado: FLAG{n0_t4n_r4p1d0}  (comentario de la portada)
+
+Pistas usadas: robots.txt, nota de /personal/, nota base64 de config.bak.
+Reglas respetadas: solo peticiones HTTP desde fuera; NO se uso docker exec/cp ni se
+abrio el .tar de la imagen.

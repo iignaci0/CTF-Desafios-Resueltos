@@ -1,0 +1,19 @@
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://127.0.0.1:8080/core
+[+] Method:                  GET
+[+] Threads:                 30
+[+] Wordlist:                /mnt/c/Users/Ignacio/AppData/Local/Temp/claude/3d5ed4b5ffafadc5/e8a6df27-ccd7-46cb-b371-d3b8a00bd299/scratchpad/tools/common.txt
+[+] Negative Status codes:   404
+[+] User Agent:              SENTINEL/2.1
+[+] Extensions:              bak,json,cfg,conf,log,txt,html,php
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+/console              (Status: 301) [Size: 162] [--> /core/console/]
+===============================================================
+Finished
+===============================================================

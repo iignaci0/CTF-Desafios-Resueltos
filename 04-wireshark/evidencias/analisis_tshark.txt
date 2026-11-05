@@ -1,0 +1,77 @@
+=== 1) Levanto el servidor web de login (HTTP, puerto 8090) ===
+=== 2) Inicio la captura con tshark en la interfaz loopback (lo) ===
+$ tshark -i lo -f 'tcp port 8090' -w captura_login.pcap
+=== 3) Hago el inicio de sesion por HTTP (datos de prueba) ===
+$ curl -s -d 'usuario=invitado&password=hola123' http://127.0.0.1:8090/login   (login erroneo)
+$ curl -s -d 'usuario=admin&password=admin123' http://127.0.0.1:8090/login     (login correcto)
+=== 4) Detengo la captura y el servidor ===
+
+=== 5) Consola del servidor (prueba de que recibio los logins) ===
+
+=== 6) Paquetes HTTP capturados (filtro http) ===
+$ tshark -r captura_login.pcap -Y http -T fields -e frame.number -e ip.src -e ip.dst -e http.request.method -e http.request.uri -e http.response.code
+4	127.0.0.1	127.0.0.1	POST	/login	
+8	127.0.0.1	127.0.0.1			200
+16	127.0.0.1	127.0.0.1	POST	/login	
+20	127.0.0.1	127.0.0.1			200
+
+=== 7) FILTRO: aislo los POST de login y leo los campos (el tesoro) ===
+$ tshark -r captura_login.pcap -Y 'http.request.method==POST' -T fields -e ip.src -e ip.dst -e urlencoded-form.key -e urlencoded-form.value
+127.0.0.1	127.0.0.1	usuario,password	invitado,hola123
+127.0.0.1	127.0.0.1	usuario,password	admin,admin123
+
+=== 8) 'Seguir flujo TCP' del login correcto: credenciales en texto plano ===
+$ tshark -r captura_login.pcap -q -z follow,tcp,ascii,1
+
+===================================================================
+Follow: tcp,ascii
+Filter: tcp.stream eq 1
+Node 0: 127.0.0.1:50466
+Node 1: 127.0.0.1:8090
+183
+POST /login HTTP/1.1
+Host: 127.0.0.1:8090
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Length: 31
+Content-Type: application/x-www-form-urlencoded
+
+usuario=admin&password=admin123
+	154
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.12.3
+Date: Thu, 05 Nov 2026 08:43:10 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1133
+
+
+	1133
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Login demo</title>
+  <style>
+    body { font-family: sans-serif; display:flex; justify-content:center;
+           align-items:center; height:100vh; margin:0; background:#111; color:#eee; }
+    form { background:#1e1e1e; padding:2rem; border-radius:10px; width:280px; }
+    input { width:100%; padding:.6rem; margin:.4rem 0; box-sizing:border-box;
+             border:1px solid #444; border-radius:6px; background:#000; color:#fff; }
+    button { width:100%; padding:.6rem; margin-top:.6rem; border:0; border-radius:6px;
+              background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; }
+    .msg { margin-bottom:.8rem; font-size:.9rem; }
+    .ok { color:#4ade80; }
+    .err { color:#f87171; }
+  </style>
+</head>
+<body>
+  <form method="POST" action="/login">
+    <h2>Iniciar sesion</h2>
+    <div class="msg ok">Acceso concedido ...</div>
+    <input type="text" name="usuario" placeholder="Usuario" autofocus>
+    <input type="password" name="password" placeholder="Contrasena">
+    <button type="submit">Entrar</button>
+  </form>
+</body>
+</html>
+===================================================================

@@ -1,0 +1,39 @@
+########## http://127.0.0.1:8080/core/console/index.html ##########
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consola de control &middot; ORION-7</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body class="pagina-sola">
+  <div class="franja">Clasificado &middot; Solo agentes autorizados</div>
+  <header class="cabecera">
+    <div class="contenedor">
+      <a class="logo" href="/"><span class="logo-marca"></span>ORION-7</a>
+      <p class="etiqueta">Consola de control</p>
+    </div>
+  </header>
+  <main>
+    <div class="contenedor">
+      <p class="etiqueta">/core/console</p>
+      <p class="codigo-grande" style="font-size: clamp(44px, 8vw, 88px);">Bienvenido, SENTINEL.</p>
+      <div class="terminal">
+        <span class="gris">$</span> whoami<br>
+        SENTINEL/2.1<br>
+        <span class="gris">$</span> cat /core/pendientes.txt<br>
+        <span class="gris"># si estás leyendo esto, no eres el agente de monitoreo.</span><br>
+        <span class="gris"># en ORION-7 nada está oculto para quien sabe enumerar.</span><br>
+        <span class="gris"># fragmento 3/3</span><br>
+        <span class="fragmento">0cult0</span><br><br>
+        <span class="gris"># arma la FLAG: FLAG{fragmento1_fragmento2_fragmento3}</span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
+

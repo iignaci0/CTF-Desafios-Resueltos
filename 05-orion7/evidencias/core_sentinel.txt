@@ -1,0 +1,70 @@
+=== Decodifico la nota base64 de config.bak ===
+$ echo '<base64>' | base64 -d
+Nota para quien herede esto: el sistema de control quedo en /core/ y solo responde al agente de monitoreo, que se identifica como SENTINEL/2.1. Desde afuera parece que no existe. [fragmento 2/3: 3st4] -K.V.
+
+=== /core/ SIN el User-Agent correcto (desde afuera 'no existe') ===
+$ curl -s -i http://127.0.0.1:8080/core/
+HTTP/1.1 404 Not Found
+Server: nginx
+Date: Thu, 05 Nov 2026 08:57:34 GMT
+Content-Type: text/html
+Content-Length: 1200
+Connection: keep-alive
+ETag: "6ad57a00-4b0"
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404 &middot; ORION-7</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+
+=== /core/ CON el agente de monitoreo SENTINEL/2.1 ===
+$ curl -s -i -A 'SENTINEL/2.1' http://127.0.0.1:8080/core/
+HTTP/1.1 403 Forbidden
+Server: nginx
+Date: Thu, 05 Nov 2026 08:57:34 GMT
+Content-Type: text/html
+Content-Length: 1277
+Connection: keep-alive
+ETag: "6ad57a00-4fd"
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>403 &middot; ORION-7</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body class="pagina-sola">
+  <div class="franja">Acceso restringido</div>
+  <header class="cabecera">
+    <div class="contenedor">
+      <a class="logo" href="/"><span class="logo-marca"></span>ORION-7</a>
+    </div>
+  </header>
+  <main>
+    <div class="contenedor">
+      <p class="etiqueta">Error &mdash; acceso denegado</p>
+      <p class="codigo-grande">403</p>
+      <div class="nota">
+        Este directorio existe, pero su contenido no se lista.<br>
+        Si conoces el nombre exacto de un archivo, es otra historia.
+        <p class="firma">&mdash; K.V.</p>
+      </div>
+      <div class="terminal">
+        <span class="gris"># fragmento 1/3</span><br>
+        <span class="fragmento">n4d4</span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
+
+

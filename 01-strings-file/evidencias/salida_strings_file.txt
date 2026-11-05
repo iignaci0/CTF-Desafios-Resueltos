@@ -1,0 +1,27 @@
+========================================================
+ FASE 1 - Identificar el archivo real (no confiar en .bin)
+========================================================
+$ ls -l evidence.bin
+-rwxrwxrwx 16672 evidence.bin
+
+$ file evidence.bin
+evidence.bin: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=f9fb0fca9718bba228a0086c9c61b1b821657f99, for GNU/Linux 3.2.0, not stripped
+
+========================================================
+ FASE 2 - Buscar las FLAG con strings
+========================================================
+$ strings evidence.bin | grep -iE 'flag|ctf'
+SENUELO_FLAG{esta_no_es_la_flag_real}
+SENUELO_FLAG{sigue_buscando}
+FLAG{esta_no_es_la_respuesta_final}
+FLAG{ELF_DESCUBIERTO}
+FLAG_FINAL=FLAG{STRINGS_ENCONTRO_LA_EVIDENCIA}
+final_flag
+
+---- Solo las que empiezan estrictamente con FLAG{ y FLAG_FINAL ----
+$ strings evidence.bin | grep -E 'FLAG\{|FLAG_FINAL'
+SENUELO_FLAG{esta_no_es_la_flag_real}
+SENUELO_FLAG{sigue_buscando}
+FLAG{esta_no_es_la_respuesta_final}
+FLAG{ELF_DESCUBIERTO}
+FLAG_FINAL=FLAG{STRINGS_ENCONTRO_LA_EVIDENCIA}

@@ -1,0 +1,21 @@
+RETO 1 - John the Ripper: romper secreto.zip
+============================================
+$ zip2john secreto.zip > hash.txt
+# hash.txt:
+secreto.zip/nota.txt:$pkzip2$1*2*2*0*3b*2f*3bfe6e47*0*42*0*3b*3bfe*2001*716b712204c1a9f3ba0c315ca1bfa147211a05
+  (...)
+
+$ john --wordlist=rockyou.txt hash.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (PKZIP [32/64])
+Will run 20 OpenMP threads
+/-\|/-\|/-\|/-\|/-\|/-\|/-\ Press 'q' or Ctrl-C to abort, almost any other key for status
+Panda123         (secreto.zip/nota.txt)
+1g 0:00:00:00 DONE (2026-11-05 05:33) 11.49g/s 24481Kp/s 24481Kc/s 24481KC/s TD171717..JHOLINE
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+
+$ john --show hash.txt
+secreto.zip/nota.txt:Panda123:nota.txt:secreto.zip::secreto.zip
+
+1 password hash cracked, 0 left

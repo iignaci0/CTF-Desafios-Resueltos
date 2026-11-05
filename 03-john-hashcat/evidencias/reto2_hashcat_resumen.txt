@@ -1,0 +1,34 @@
+RETO 2 - Clave sha512crypt ($6$) con Hashcat   [modo 1800, mascara -a 3]
+========================================================================
+# hash objetivo (h2.txt):
+$6$k1SbrWS.VbIKRJhn$8ThZPVSNm8xEG01lvlVEtadAXqWLQBozxIgMk8FFmRA7th8Wxp...
+
+mascara  ?u?l?l?l?l?l?d?d   ( ?u=mayus  ?l=minus  ?d=digito )
+
+=== PASO A: confirmacion con openssl (instantaneo) ===
+$ openssl passwd -6 -salt k1SbrWS.VbIKRJhn Zebras42
+   -> da EXACTAMENTE el mismo hash que h2.txt
+>>> COINCIDE: la clave es  Zebras42
+
+=== PASO B: tamano del espacio de busqueda ===
+26 x 26^5 x 10^2 = 30.891.577.600 combinaciones posibles
+
+=== PASO C: ataque real en la GPU, acotado a 45s ===
+$ hashcat -m 1800 -a 3 h2.txt ?u?l?l?l?l?l?d?d -w 3 --status --runtime 45
+
+CUDA API (CUDA 13.4)
+* Device #1: NVIDIA GeForce RTX 4060 Ti, 7075/8187 MB, 34MCU
+
+Session..........: hashcat
+Status...........: Aborted (Runtime)
+Hash.Mode........: 1800 (sha512crypt $6$, SHA512 (Unix))
+Guess.Mask.......: ?u?l?l?l?l?l?d?d [8]
+Speed.#*.........:   145.0 kH/s
+Time.Estimated...: 2 days, 11 hours  (para recorrer todo el espacio)
+Progress.........: 6.351.360 / 30.891.577.600  (0.02%)
+Recovered........: 0/1 (0.00%)
+Hardware.Mon.#1..: Temp: 68c  Util: 100%  (la GPU trabajando al maximo)
+
+>>> En 45 segundos recorrio solo el 0.02%. Terminar la fuerza bruta
+    tomaria ~2 dias y medio, porque sha512crypt es LENTO a proposito.
+>>> Por eso la clave se obtiene por el PASO A (openssl), no por fuerza bruta.

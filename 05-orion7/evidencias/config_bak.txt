@@ -1,0 +1,32 @@
+=== /archive/config.bak (el respaldo que K.V. no alcanzó a borrar) ===
+$ curl -s http://127.0.0.1:8080/archive/config.bak
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 08:56:53 GMT
+Content-Type: application/octet-stream
+Content-Length: 632
+Last-Modified: Mon, 19 Oct 2026 02:01:36 GMT
+Connection: keep-alive
+ETag: "6ad57a00-278"
+Accept-Ranges: bytes
+
+# ORION-7 :: configuración del portal (respaldo previo a la migración)
+# CLASIFICADO - NO DISTRIBUIR
+
+[portal]
+version = 2.2
+modo_mantencion = true
+
+[red]
+segmento_publico = 10.7.0.0/24
+segmento_interno = 10.7.128.0/17
+
+[agente_monitoreo]
+habilitado = true
+intervalo_s = 30
+
+[notas]
+# lo dejo codificado por si alguien abre este archivo
+nota_operador = Tm90YSBwYXJhIHF1aWVuIGhlcmVkZSBlc3RvOiBlbCBzaXN0ZW1hIGRlIGNvbnRyb2wgcXVlZG8gZW4gL2NvcmUvIHkgc29sbyByZXNwb25kZSBhbCBhZ2VudGUgZGUgbW9uaXRvcmVvLCBxdWUgc2UgaWRlbnRpZmljYSBjb21vIFNFTlRJTkVMLzIuMS4gRGVzZGUgYWZ1ZXJhIHBhcmVjZSBxdWUgbm8gZXhpc3RlLiBbZnJhZ21lbnRvIDIvMzogM3N0NF0gLUsuVi4=
+
+
